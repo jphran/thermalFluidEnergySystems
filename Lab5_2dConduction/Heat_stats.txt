@@ -1,0 +1,13 @@
+              Statistic [units]                 Plate Boundary                               
+                     Mean [°C]                           35.3                               
+                Std. Dev. [°C]                            4.4                               
+                   Center [°C]            (178.0, 135.0) 34.3                               
+                  Maximum [°C]                (269, 213) 45.1                               
+                  Minimum [°C]                (168,  43) 23.4                               
+               Number of Pixels                          34225                               
+       Single Pixel Area [cm²]                         0.0048                               
+                    Area [cm²]                          163.6                               
+                    Length [cm]                            N/A                               
+                     Emissivity                           0.95                               
+                   Distance [m]                          0.517                               
+                                                                                             
