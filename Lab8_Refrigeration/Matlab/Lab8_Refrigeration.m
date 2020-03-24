@@ -98,12 +98,12 @@ etaC = ((h2s-H1).*10^-3)./(((H2-H1).*10^-3)+qloss) * 100;
 figure(1);
 hold on;
 
-plot(mdot, T3 - 273.15, 'ob');
-plot(mdot, T4 - 273.15, 'sr');
-plot(mdot, Te_avg- 273.15, 'rs','MarkerFaceColor', 'r');
-plot(mdot, Tc_avg- 273.15, 'ob', 'MarkerFaceColor', 'b');
-plot(mdot, [Tamb, Tamb, Tamb, Tamb]-273.15, 'k--');
-legend({'T3', 'T4', 'Te', 'Tc', 'Tamb'});
+plot(mdot, T3 - 273.15, 'ob', 'DisplayName', 'T3');
+plot(mdot, T4 - 273.15, 'sr', 'DisplayName', 'T4');
+plot(mdot, Te_avg- 273.15, 'rs', 'DisplayName', 'Te','MarkerFaceColor', 'r');
+plot(mdot, Tc_avg- 273.15, 'ob', 'DisplayName', 'Tc', 'MarkerFaceColor', 'b');
+plot(mdot, [Tamb, Tamb, Tamb, Tamb]-273.15, 'k--', 'DisplayName', 'Tamb');
+legend();
 grid();
 title('Figure 1a, Justin Francis');
 xlabel('Mass Flow Rate, $\dot m$[kg/s]','Interpreter','latex');
@@ -137,7 +137,7 @@ saveas(gcf, 'Fig1c.png');
 figure(4);
 hold on;
 yyaxis left;
-ylabel('eta_C');
+ylabel('eta_C, [%]');
 plot(mdot,etaC, 'bo');
 yyaxis right;
 plot(mdot,totalPower, 'rs');
@@ -145,16 +145,27 @@ grid();
 title('Figure 1d, Justin Francis');
 xlabel('Mass Flow Rate, $\dot m$[kg/s]','Interpreter','latex');
 ylabel('Electrical Power, Win[W]');
-legend({'COPR', 'Electrical Power'});
+legend({'COPR', 'Electrical Power'},'Location','southeast');
 saveas(gcf, 'Fig1d.png');
 %% 1e
 openfig('Ph_Diagram_R134a.fig');
 hold on;
 maxFlowIdx = 1;
-plot(H1(maxFlowIdx)*10^-3, P1(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '1');
-plot(H2(maxFlowIdx)*10^-3, P2(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '2');
-plot(H3(maxFlowIdx)*10^-3, P3(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '3');
-plot(H4(maxFlowIdx)*10^-3, P4(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '4');
+H = [H1(maxFlowIdx), H2(maxFlowIdx), H3(maxFlowIdx), H4(maxFlowIdx), H5(maxFlowIdx)].*10^-3;
+P = [P1(maxFlowIdx), P2(maxFlowIdx), P3(maxFlowIdx), P4(maxFlowIdx), P5(maxFlowIdx)].*10^-3;
+
+plot(H, P, 'ro-', 'MarkerFaceColor', 'r');
+% plot(H1(maxFlowIdx)*10^-3, P1(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '1');
+% plot(H2(maxFlowIdx)*10^-3, P2(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '2');
+% plot(H3(maxFlowIdx)*10^-3, P3(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '3');
+% plot(H4(maxFlowIdx)*10^-3, P4(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '4');
+% plot(H5(maxFlowIdx)*10^-3, P5(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '5');
+text(H(1), P(1), '1');
+text(H(2), P(2), '2');
+text(H(3), P(3), '3');
+text(H(4), P(4), '4');
+text(H(5), P(5), '5');
+
 saveas(gcf, 'Fig1e.png');
 
 
