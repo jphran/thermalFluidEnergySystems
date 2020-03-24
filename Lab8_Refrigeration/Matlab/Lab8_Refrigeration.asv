@@ -55,17 +55,17 @@ end
 %% data anal
 for i = 1:4
     %3
-    h1(i)= py.CoolProp.CoolProp.PropsSI('H','T',T1(i),'P',P1(i),'R134a'); %J/kg
-    h2(i)=py.CoolProp.CoolProp.PropsSI('H','T',T2(i),'P',P2(i),'R134a'); %J/kg
-    h3(i)=py.CoolProp.CoolProp.PropsSI('H','T',T3(i),'P',P3(i),'R134a'); %J/kg
-    h4(i)= h3(i); %py.CoolProp.CoolProp.PropsSI('H','T',T4(i),'P',P4(i),'R134a'); %J/kg
-    h5(i)=py.CoolProp.CoolProp.PropsSI('H','T',T5(i),'P',P5(i),'R134a'); %J/kg
+    H1(i)= py.CoolProp.CoolProp.PropsSI('H','T',T1(i),'P',P1(i)*10^3,'R134a'); %J/kg
+    H2(i)= py.CoolProp.CoolProp.PropsSI('H','T',T2(i),'P',P2(i)*10^3,'R134a'); %J/kg
+    H3(i)= py.CoolProp.CoolProp.PropsSI('H','T',T3(i),'P',P3(i)*10^3,'R134a'); %J/kg
+    H4(i)= H3(i); %py.CoolProp.CoolProp.PropsSI('H','T',T4(i),'P',P4(i),'R134a'); %J/kg
+    H5(i)= py.CoolProp.CoolProp.PropsSI('H','T',T5(i),'P',P5(i)*10^3,'R134a'); %J/kg
     %4
-    r1(i)=py.CoolProp.CoolProp.PropsSI('D','T',T1(i),'P',P1(i),'R134a'); %kg/m3
-    r2(i)=py.CoolProp.CoolProp.PropsSI('D','T',T2(i),'P',P2(i),'R134a');
-    r3(i)=py.CoolProp.CoolProp.PropsSI('D','T',T3(i),'P',P3(i),'R134a');
-    r4(i)=py.CoolProp.CoolProp.PropsSI('D','T',T3(i),'P',P4(i),'R134a');
-    r5(i)=py.CoolProp.CoolProp.PropsSI('D','T',T4(i),'P',P5(i),'R134a');
+    r1(i)=py.CoolProp.CoolProp.PropsSI('D','T',T1(i),'P',P1(i)*10^3,'R134a'); %kg/m3
+    r2(i)=py.CoolProp.CoolProp.PropsSI('D','T',T2(i),'P',P2(i)*10^3,'R134a');
+    r3(i)=py.CoolProp.CoolProp.PropsSI('D','T',T3(i),'P',P3(i)*10^3,'R134a');
+    r4(i)=py.CoolProp.CoolProp.PropsSI('D','T',T3(i),'P',P4(i)*10^3,'R134a');
+    r5(i)=py.CoolProp.CoolProp.PropsSI('D','T',T4(i),'P',P5(i)*10^3,'R134a');
 
 end
 
@@ -74,24 +74,24 @@ mdot = r3.*flowRate; %kg/s
 %6
 Wcomp = totalPower - Wfan; %W
 %7
-eta = .78;
-Win = eta*Wcomp;
+eta = .78; %given
+Win = eta.*Wcomp; % W
 %8
-win = Win./mdot;
+win = (Win./mdot) .* 10^-3; %kJ/kg
 %9
-qH = -(h3-h2);
-qL = h1-h4;
+qH = -(H3-H2).*10^-3; %kJ/kg
+qL = (H1-H4).*10^-3;
 %10
-qloss = win+h1-h2;
+qloss = win + ((H1-H2).*10^-3); %kJ/kg
 %11
 COPR = qL./win;
 %12
 for i = 1:4
-    s1(i) = py.CoolProp.CoolProp.PropsSI('S', 'T', T1(i), 'P', P1(i), 'R134a');
+    s1(i) = py.CoolProp.CoolProp.PropsSI('S', 'T', T1(i), 'P', P1(i)*10^3, 'R134a');
     h2s(i) = py.CoolProp.CoolProp.PropsSI('H', 'S', s1(i), 'T', T2(i), 'R134a');
 end
 %13
-etaC = (h2s-h1)./(h2-h1+qloss) * 100;
+etaC = ((h2s-H1).*10^-3)./((H2-H1)*+qloss) * 100;
 
 
 %% figures 1a
@@ -151,10 +151,10 @@ saveas(gcf, 'Fig1d.png');
 openfig('Ph_Diagram_R134a.fig');
 hold on;
 maxFlowIdx = 1;
-plot(h1(maxFlowIdx)*10^-3, P1(maxFlowIdx)*10^-3, 'ro', 'DisplayName', '1');
-plot(h2(maxFlowIdx)*10^-3, P2(maxFlowIdx)*10^-3, 'bo', 'DisplayName', '2');
-plot(h3(maxFlowIdx)*10^-3, P3(maxFlowIdx)*10^-3, 'go', 'DisplayName', '3');
-plot(h4(maxFlowIdx)*10^-3, P4(maxFlowIdx)*10^-3, 'ko', 'DisplayName', '4');
+plot(H1(maxFlowIdx)*10^-3, P1(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '1');
+plot(H2(maxFlowIdx)*10^-3, P2(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '2');
+plot(H3(maxFlowIdx)*10^-3, P3(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '3');
+plot(H4(maxFlowIdx)*10^-3, P4(maxFlowIdx)*10^-3, 'ro', 'MarkerFaceColor', 'r', 'DisplayName', '4');
 saveas(gcf, 'Fig1e.png');
 
 
