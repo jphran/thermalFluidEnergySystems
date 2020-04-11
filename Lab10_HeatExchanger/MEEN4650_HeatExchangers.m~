@@ -45,9 +45,14 @@ m_dot_hot = rho_hot.*V_dot_hot;
 % 5, calc heat capacities
 C_cold = m_dot_cold.*Cp_cold;
 C_hot = m_dot_hot.*Cp_hot;
-C_min = min([C_cold, C_hot]);
-C_max = max([C_cold, C_hot]);
-C_r = C_min/C_max;
+
+for i = 1:length(C_hot)
+    C_min = min([C_cold(i), C_hot(i)]);
+    C_max = max([C_cold(i), C_hot(i)]);
+    C_r(i) = C_min/C_max;
+end
+
+C_r = C_r.';
 
 % 6, calc the heat trans rates
 q_h = C_hot.*(T_hi-T_ho);
@@ -80,7 +85,7 @@ else
     effectiveness_theory = (NTU)./(1+NTU);
 end
 
-%% 12, est rate of heat trans from shell to surrounding
+% 12, est rate of heat trans from shell to surrounding
     % finding radiation heat transfer
 sig = 5.6703e-8; %boltzman const, W/m2K4
 eps = 0.95; %emissivity, given
@@ -92,15 +97,72 @@ T_f = 0.5.*(T_shell + T_amb);
 g = 9.81; %grav const, m/s2
 vu_air = mu_air./rho_air; % kine viscosity
 alpha_air = kappa_air./(rho_air.*Cp_air); %thermal diffusivity
-Beta = 1/T_f; %vol thermal expansion coeff
+Beta = 1./T_f; %vol thermal expansion coeff
 Ra_D = (g.*Beta.*(T_shell-T_amb).*d_outter^3)./(vu_air.*alpha_air);
 Nu_bar = 0.48.*Ra_D.^(1/4);
 h_bar = kappa_air.*Nu_bar/d_outter;
 q_conv = h_bar.*pi*d_outter*L.*(T_shell-T_amb);
     
 % 13, est percent uncertainty in measured heat trans rates
-percent_uncert_cold = ((sig_V_dot_cold./V_dot_cold).^2 + (sig_dT_cold./dT_cold).^2).^(1/2).*100; % percent uncertainty cold 
-    
-    
+dT_cold = T_co - T_ci;
+dT_hot = T_hi - T_ho;
+sig_dT = 0.1;
+sig_V_dot = 0.2 * 0.000063090196; % gpm -> m3/s
+percent_uncert_cold = ((sig_V_dot./V_dot_cold).^2 + (sig_dT./dT_cold).^2).^(1/2).*100; % percent uncertainty cold stream
+percent_uncert_hot = ((sig_V_dot./V_dot_hot).^2 + (sig_dT./dT_hot).^2).^(1/2).*100; % percent uncertainty cold stream
+
+%% Figures and tables
+close all;
+
+% 1a
+dq = abs(q_h - abs(q_c))./(0.5.*(q_h + abs(q_c))).*100;
+
+%1b
+deff = abs(effectiveness-effectiveness_theory)./(effectiveness_theory).*100;
+
+%1c
+h1 = openfig('EffectivenessNTU.fig', 'reuse'); %load fig
+ax1 = gca; %get handle to axes of fig
+
+h2 = openfig('EffectivenessNTU.fig', 'reuse');
+ax2 = gca;
+
+h3 = figure(); %create new
+hold on;
+
+s1 = subplot(1,2,1); 
+
+s2 = subplot(1,2,2);
+
+fig1 = get(ax1, 'children'); %get handle to children
+fig2 = get(ax2, 'children');
+copyobj(fig1, s1); %copy children to parent axes
+copyobj(fig2, s2);
+
+%plot on left
+axes(s1);
+hold on;
+plot(NTU,effectiveness, 'bo', 'DisplayName' , 'Measured Efficiency');
+plot(NTU,effectiveness_theory, 'k+', 'DisplayName', 'Theoretical Efficiency');
+legend();
+%plot on right
+axes(s2);
+hold on;
+plot(NTU,effectiveness, 'bo', 'DisplayName' , 'Measured Efficiency');
+plot(NTU,effectiveness_theory, 'k+', 'DisplayName', 'Theoretical Efficiency');
+legend();
+
+%set limits
+xlim(s2,[0.2 0.3]); % assign your limits only to that specific subplot
+ylim(s2, [0.16 0.24]);
+
+% l(1)=legend(h(1),'show')
+% l(2)=legend(h(2),'show')
+
+
+legend(s1, {'1','2','3','4','5','Measured Efficiency', 'Theoretical Efficiency'});
+legend(s2, {'1','2','3','4','5','Measured Efficiency', 'Theoretical Efficiency'});
+
+
     
     
